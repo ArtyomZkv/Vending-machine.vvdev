@@ -1,4 +1,5 @@
 import type { Slot } from "./slot.js";
+import { MachineBrokenError, SlotNotFoundError, OutOfStockError, SpoiledProductError, InsufficientCreditError } from "../errors/domain-errors.js";
 
 type MachineStatus = 'operational' | 'overheated' | 'broken';
 type RestockSlot = Omit<Slot, 'freshness'>;
@@ -40,7 +41,7 @@ class Machine {
 
     public restockSlot(slot: RestockSlot) {
         if(this.status === 'broken') {
-            throw new Error('Machine is broken. Cannot restock slots.');
+            throw new MachineBrokenError();
         }
 
         const existingSlot = this.slots.find(s => s.id === slot.id);
@@ -59,7 +60,7 @@ class Machine {
 
     public insertCredit(amount: number): number {
         if(this.status === 'broken') {
-            throw new Error('Machine is broken. Cannot insert credit.');
+            throw new MachineBrokenError();
         }
 
         this.credit += amount;
@@ -69,17 +70,17 @@ class Machine {
 
     public buyProduct(slotId: number): BuyProductResult {
         if(this.status === 'broken') {
-            throw new Error('Machine is broken. Cannot buy product.');
+            throw new MachineBrokenError();
         }
         const currentSlot = this.slots.find(s => s.id === slotId);
         
-        if(!currentSlot) throw new Error('Slot not found.');
+        if(!currentSlot) throw new SlotNotFoundError(slotId);
         
-        if(currentSlot.stock === 0) throw new Error('Slot is out of stock.');
+        if(currentSlot.stock === 0) throw new OutOfStockError(slotId);
         
-        if(currentSlot.freshness === 0) throw new Error('Product is expired.');
+        if(currentSlot.freshness === 0) throw new SpoiledProductError(slotId);
         
-        if(this.credit < currentSlot.price) throw new Error('Insufficient credit.');
+        if(this.credit < currentSlot.price) throw new InsufficientCreditError(currentSlot.price, this.credit);
 
         this.credit -= currentSlot.price;
         this.revenue += currentSlot.price;
@@ -89,7 +90,7 @@ class Machine {
 
     public maintain(): MaintainResult {
         if(this.status === 'broken') {
-            throw new Error('Machine is broken. Cannot perform maintenance.');
+            throw new MachineBrokenError();
         }
         this.temperature = Math.max(0, this.temperature - 30);
         return { temperature: this.temperature, status: this.status };
