@@ -1,4 +1,4 @@
-class DomainError extends Error {
+export class DomainError extends Error {
     public readonly status: number;
     public readonly field?: string;
 

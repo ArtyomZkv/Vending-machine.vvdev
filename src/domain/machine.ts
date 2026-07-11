@@ -6,7 +6,7 @@ type RestockSlot = Omit<Slot, 'freshness'>;
 type BuyProductResult = { credit: number, slot: Slot };
 type MaintainResult = { temperature: number, status: MachineStatus };
 
-class Machine {
+export class Machine {
     private temperature: number;
     private credit: number;
     private revenue: number;
