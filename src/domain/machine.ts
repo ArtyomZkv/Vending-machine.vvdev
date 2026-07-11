@@ -95,4 +95,14 @@ class Machine {
         this.temperature = Math.max(0, this.temperature - 30);
         return { temperature: this.temperature, status: this.status };
     }
+
+    public tick():boolean {
+        if(this.status === 'broken')
+            return false;
+        this.temperature += 3;
+        this.slots.forEach(slot => {
+            slot.freshness = Math.max(0, slot.freshness-1);            
+        });
+        return true;
+    }
 }
