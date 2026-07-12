@@ -1,0 +1,32 @@
+###
+GET http://localhost:3000/machine
+
+###
+POST http://localhost:3000/machine/insert
+Content-Type: application/json
+
+{
+  "amount": 100
+}
+
+###
+POST http://localhost:3000/machine/restock
+Content-Type: application/json
+
+{
+  "id": 2,
+  "product": "Sprite",
+  "price": 130,
+  "stock": 15
+}
+
+###
+POST http://localhost:3000/machine/select
+Content-Type: application/json
+
+{
+  "slotId": 1
+}
+
+###
+POST http://localhost:3000/machine/maintain

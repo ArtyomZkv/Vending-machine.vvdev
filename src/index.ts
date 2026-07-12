@@ -2,10 +2,12 @@ import express from 'express';
 import machineRoutes from './routes/machine-routes.js';
 import { errorHandler } from './middleware/error-handler.js';
 import { machine } from './state.js';
+import { requestLogger } from './middleware/logger.js';
 
 const app = express();
 
 app.use(express.json());
+app.use(requestLogger);
 app.use(machineRoutes);
 app.use(errorHandler);
 
